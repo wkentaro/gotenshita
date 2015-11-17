@@ -35,6 +35,6 @@ setup(
         'Operating System :: POSIX',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    entry_points={'console_scripts': ['gotenshita=gotenshita:main']},
+    entry_points={'console_scripts': ['gotenshita=gotenshita.cli:main']},
     test_suite='nose.collector',
 )
