@@ -52,19 +52,24 @@ def get_open_info_monthly(datetime_):
 
 
 def main():
-    now = datetime.datetime.now()
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'court', nargs='?', default='a', type=str,
         help="A to F (default: a), supports multiple select like 'a,f'")
-    parser.add_argument('-t', '--all-time', help='Show all time sections',
+    parser.add_argument('-p', '--show-past', help='show even if past time',
                         action='store_true')
-    parser.add_argument('-c', '--all-courts', help='Show all court sections',
+    parser.add_argument('-a', '--all-courts', help='show all court sections',
+                        action='store_true')
+    parser.add_argument('-t', '--tomorrow', help="show tomorrow's data",
                         action='store_true')
     args = parser.parse_args()
 
-    show_all_time = args.all_time
+    when = datetime.datetime.now()
+    if args.tomorrow:
+        when = datetime.datetime(when.year, when.month, when.day)
+        when += datetime.timedelta(days=1)
+
+    show_past = args.show_past
     show_all_courts = args.all_courts
 
     # validate args.court
@@ -77,11 +82,11 @@ def main():
         courts = list('abcdef')
 
     table = []
-    month_info = get_open_info_monthly(now)
-    now_time = time.strptime(now.strftime('%H:%M:%S'), '%H:%M:%S')
-    for t, is_open in sorted(month_info[int(now.strftime('%d'))].items()):
+    month_info = get_open_info_monthly(when)
+    when_time = time.strptime(when.strftime('%H:%M:%S'), '%H:%M:%S')
+    for t, is_open in sorted(month_info[int(when.strftime('%d'))].items()):
         end_time = time.strptime(t[1], '%H:%M')
-        if not show_all_time and end_time < now_time:
+        if not show_past and end_time < when_time:
             continue
         period = '{}-{}'.format(*t)
         row = [period]
@@ -93,5 +98,5 @@ def main():
                 open_or_close = termcolor.colored('open', 'green')
             row.append(open_or_close)
         table.append(row)
-    headers = [now.strftime('%Y-%m-%d')] + courts
+    headers = [when.strftime('%Y-%m-%d')] + courts
     print(tabulate.tabulate(table, headers=headers, stralign='center'))
