@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+import argparse
 import re
+import time
+import sys
 import datetime
 
 import termcolor
@@ -53,25 +56,31 @@ def get_open_info_monthly(datetime_):
 
 
 def main():
-    import sys
-    import argparse
+    now = datetime.datetime.now()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('court', nargs='?', default='a', type=str,
                         help='A to F (default: A)')
+    parser.add_argument('-a', '--all', help='Show all time sections',
+                        action='store_true')
     args = parser.parse_args()
 
+    show_all = args.all
     court = args.court.lower()
     if court not in 'abcdef':
         sys.stderr.write('Invalid court, we support A,B,C,..F.\n')
 
-    now = datetime.datetime.now()
     print('=' * 28)
     print('Date: {}, Court: {}'.format(now.strftime('%Y-%m-%d'), court.upper()))
     print('=' * 28)
     table = []
     month_info = get_open_info_monthly(now)
-    for time, is_open in sorted(month_info[int(now.strftime('%d'))].items()):
-        period = '{}-{}'.format(*time)
+    now_time = time.strptime(now.strftime('%H:%M:%S'), '%H:%M:%S')
+    for t, is_open in sorted(month_info[int(now.strftime('%d'))].items()):
+        end_time = time.strptime(t[1], '%H:%M')
+        if not show_all and end_time < now_time:
+            continue
+        period = '{}-{}'.format(*t)
         open_or_close = 'close'
         if is_open[court]:
             period = termcolor.colored(period, 'green')
