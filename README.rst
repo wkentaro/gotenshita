@@ -6,6 +6,14 @@ See Gotenshita court open status.
 The information is got from `undoukai <http://www.undou-kai.com/senyu/senyu_yoyaku.html>`_.
 
 
+Install
+=======
+
+::
+
+  pip install gotenshita
+
+
 Usage
 =====
 
