@@ -54,11 +54,9 @@ def get_open_info_monthly(datetime_):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'court', nargs='?', default='a', type=str,
-        help="A to F (default: a), supports multiple select like 'a,f'")
+        'court', nargs='?', default=None, type=str,
+        help="A to F (default is all), supports multiple select like 'a,f'")
     parser.add_argument('-p', '--show-past', help='show even if past time',
-                        action='store_true')
-    parser.add_argument('-a', '--all-courts', help='show all court sections',
                         action='store_true')
     parser.add_argument('-t', '--tomorrow', help="show tomorrow's data",
                         action='store_true')
@@ -70,16 +68,16 @@ def main():
         when += datetime.timedelta(days=1)
 
     show_past = args.show_past
-    show_all_courts = args.all_courts
 
     # validate args.court
-    courts = args.court.lower().split(',')
-    for c in courts:
-        if c not in 'abcdef':
-            sys.stderr.write('Invalid court, we support A,B,C,..F.\n')
-            sys.exit(1)
-    if show_all_courts:
+    if args.court is None:
         courts = list('abcdef')
+    else:
+        courts = args.court.lower().split(',')
+        for c in courts:
+            if c not in 'abcdef':
+                sys.stderr.write('Invalid court, we support A,B,C,..F.\n')
+                sys.exit(1)
 
     table = []
     month_info = get_open_info_monthly(when)
