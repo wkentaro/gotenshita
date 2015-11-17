@@ -92,7 +92,7 @@ def main():
             open_or_close = 'close'
             if is_open[c]:
                 if len(courts) == 1:
-                    period = termcolor.colored(period, 'green')
+                    row[0] = termcolor.colored(period, 'green')
                 open_or_close = termcolor.colored('open', 'green')
             row.append(open_or_close)
         table.append(row)
