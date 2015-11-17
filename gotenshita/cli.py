@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 import argparse
 import re
 import time
@@ -56,31 +55,43 @@ def main():
     now = datetime.datetime.now()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('court', nargs='?', default='a', type=str,
-                        help='A to F (default: A)')
-    parser.add_argument('-a', '--all', help='Show all time sections',
+    parser.add_argument(
+        'court', nargs='?', default='a', type=str,
+        help="A to F (default: a), supports multiple select like 'a,f'")
+    parser.add_argument('-t', '--all-time', help='Show all time sections',
+                        action='store_true')
+    parser.add_argument('-c', '--all-courts', help='Show all court sections',
                         action='store_true')
     args = parser.parse_args()
 
-    show_all = args.all
-    court = args.court.lower()
-    if court not in 'abcdef':
-        sys.stderr.write('Invalid court, we support A,B,C,..F.\n')
+    show_all_time = args.all_time
+    show_all_courts = args.all_courts
 
-    print('=' * 28)
-    print('Date: {}, Court: {}'.format(now.strftime('%Y-%m-%d'), court.upper()))
-    print('=' * 28)
+    # validate args.court
+    courts = args.court.lower().split(',')
+    for c in courts:
+        if c not in 'abcdef':
+            sys.stderr.write('Invalid court, we support A,B,C,..F.\n')
+            sys.exit(1)
+    if show_all_courts:
+        courts = list('abcdef')
+
     table = []
     month_info = get_open_info_monthly(now)
     now_time = time.strptime(now.strftime('%H:%M:%S'), '%H:%M:%S')
     for t, is_open in sorted(month_info[int(now.strftime('%d'))].items()):
         end_time = time.strptime(t[1], '%H:%M')
-        if not show_all and end_time < now_time:
+        if not show_all_time and end_time < now_time:
             continue
         period = '{}-{}'.format(*t)
-        open_or_close = 'close'
-        if is_open[court]:
-            period = termcolor.colored(period, 'green')
-            open_or_close = termcolor.colored('open', 'green')
-        table.append([period, open_or_close])
-    print(tabulate.tabulate(table, headers=['time', 'open or close'], stralign='center'))
+        row = [period]
+        for c in courts:
+            open_or_close = 'close'
+            if is_open[c]:
+                if len(courts) == 1:
+                    period = termcolor.colored(period, 'green')
+                open_or_close = termcolor.colored('open', 'green')
+            row.append(open_or_close)
+        table.append(row)
+    headers = [now.strftime('%Y-%m-%d')] + courts
+    print(tabulate.tabulate(table, headers=headers, stralign='center'))
