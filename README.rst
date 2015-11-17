@@ -19,8 +19,17 @@ Usage
 
 ::
 
-   % gotenshita -h
-   usage: gotenshita [-h] [court]
+  % gotenshita -h
+  usage: gotenshita [-h] [-p] [-t] [court]
+
+  positional arguments:
+    court            A to F (default is all), supports multiple select like
+                     'a,f'
+
+  optional arguments:
+    -h, --help       show this help message and exit
+    -p, --show-past  show even if past time
+    -t, --tomorrow   show tomorrow's data
 
 
 .. image:: images/demo.png
