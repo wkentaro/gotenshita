@@ -1,6 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import gotenshita.cli
-
-gotenshita.cli.main()
+__version__ = '1.0.4'
