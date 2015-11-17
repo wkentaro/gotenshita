@@ -11,7 +11,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 
 def get_open_info_monthly(datetime_):
