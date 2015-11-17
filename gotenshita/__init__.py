@@ -5,6 +5,7 @@ from __future__ import print_function
 import re
 import datetime
 
+import termcolor
 import tabulate
 import requests
 from bs4 import BeautifulSoup
@@ -70,8 +71,12 @@ def main():
     table = []
     month_info = get_open_info_monthly(now)
     for time, is_open in sorted(month_info[int(now.strftime('%d'))].items()):
-        open_or_close = 'open' if is_open[court] else 'close'
-        table.append(['{}-{}'.format(*time), open_or_close])
+        period = '{}-{}'.format(*time)
+        open_or_close = 'close'
+        if is_open[court]:
+            period = termcolor.colored(period, 'green')
+            open_or_close = termcolor.colored('open', 'green')
+        table.append([period, open_or_close])
     print(tabulate.tabulate(table, headers=['time', 'open or close'], stralign='center'))
 
 
