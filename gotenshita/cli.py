@@ -14,9 +14,6 @@ import requests
 from bs4 import BeautifulSoup
 
 
-__version__ = '1.0.4'
-
-
 def get_open_info_monthly(datetime_):
 
     yearmonth = datetime_.strftime('%Y%m')
@@ -87,7 +84,3 @@ def main():
             open_or_close = termcolor.colored('open', 'green')
         table.append([period, open_or_close])
     print(tabulate.tabulate(table, headers=['time', 'open or close'], stralign='center'))
-
-
-if __name__ == '__main__':
-    main()

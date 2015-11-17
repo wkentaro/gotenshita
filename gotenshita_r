@@ -1,1 +1,6 @@
-gotenshita/__init__.py
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import gotenshita.cli
+
+gotenshita.cli.main()
