@@ -20,7 +20,7 @@ if sys.argv[-1] == 'publish':
 
 setup(
     name='gotenshita',
-    version=__import__('gotenshita').__version__,
+    version=__version__,
     packages=find_packages(),
     description='Gotenshita notifier.',
     long_description=open('README.rst').read(),
