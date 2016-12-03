@@ -2,4 +2,4 @@ tabulate
 requests
 beautifulsoup4
 termcolor
-yaml
+PyYAML
