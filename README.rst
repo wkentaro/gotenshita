@@ -2,6 +2,9 @@
 gotenshita
 ==========
 
+.. image:: https://travis-ci.org/wkentaro/gotenshita.svg?branch=master
+    :target: https://travis-ci.org/wkentaro/gotenshita
+
 See Gotenshita court open status.
 The information is got from `undoukai <http://www.undou-kai.com/senyu/senyu_yoyaku.html>`_.
 
