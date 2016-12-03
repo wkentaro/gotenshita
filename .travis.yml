@@ -7,12 +7,12 @@ python:
   - '3.3'
   - pypy
 
-before_install:
-  - pip install flake8 hacking
-  - flake8 .
-
 install:
   - python setup.py install
+
+before_script:
+  - pip install flake8 hacking
+  - flake8 .
 
 script:
   - gotenshita
