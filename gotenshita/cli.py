@@ -11,6 +11,34 @@ import termcolor
 import tabulate
 import requests
 from bs4 import BeautifulSoup
+import yaml
+
+
+def _is_holiday(dt):
+    yaml_file = 'https://raw.githubusercontent.com/k1LoW/holiday_jp/master/holidays.yml'  # NOQA
+    res = requests.get(yaml_file)
+    data = yaml.load(res.text)
+    info = data.get(dt)
+    if info:
+        return info['en']
+    return False
+
+
+def _is_sunday(dt):
+    if dt.weekday() == 6:
+        return 'Sunday'
+    return False
+
+
+def is_gotenshita_open(dt, verbose=True):
+    stamp = dt.strftime('%Y-%m-%d')
+    holiday = _is_sunday(dt) or _is_holiday(dt) or None
+    if holiday:
+        if verbose:
+            print('{} is {}, and Gotenshita is closed.'
+                  .format(stamp, termcolor.colored(holiday, color='red')))
+        return False
+    return True
 
 
 def get_open_info_monthly(datetime_):
@@ -20,16 +48,14 @@ def get_open_info_monthly(datetime_):
     url = 'http://www.undoukai-reserve.com/facility/reserve/goten/calendar.php?place=gymnasium&yearmonth={0}'
     url = url.format(yearmonth)
     res = requests.get(url)
-# res.encoding = res.apparent_encoding
     res.encoding = 'EUC-JP'
-# print(res.apparent_encoding)
     soup = BeautifulSoup(res.text, 'lxml')
 
     close_color = ['#ffaa00', '#ffdd66']
 
     month_table = soup.find('table', {'cellpadding': '3', 'bgcolor': 'black', 'width': '765'})
 
-# time header from 10:00 to 20:20
+    # time header from 10:00 to 20:20
     time_header = month_table.find('td', {'bgcolor': 'black'})
     time_header = [tuple(tr.text.strip().split(u'\u301c')) for tr in time_header.find_all('tr')]
 
@@ -67,6 +93,9 @@ def main():
         when = datetime.datetime(when.year, when.month, when.day)
         when += datetime.timedelta(days=1)
 
+    if not is_gotenshita_open(when):
+        sys.exit(1)
+
     show_past = args.show_past
 
     # validate args.court
@@ -96,5 +125,5 @@ def main():
                 open_or_close = termcolor.colored('open', 'green')
             row.append(open_or_close)
         table.append(row)
-    headers = [when.strftime('%Y-%m-%d')] + courts
+    headers = [when.strftime('%Y-%m-%d %a')] + courts
     print(tabulate.tabulate(table, headers=headers, stralign='center'))
