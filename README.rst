@@ -2,6 +2,8 @@
 gotenshita
 ==========
 
+.. image:: https://badge.fury.io/py/gotenshita.svg
+    :target: https://badge.fury.io/py/gotenshita
 .. image:: https://travis-ci.org/wkentaro/gotenshita.svg?branch=master
     :target: https://travis-ci.org/wkentaro/gotenshita
 
