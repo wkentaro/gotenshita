@@ -1,11 +1,13 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-import sys
-import subprocess
-from setuptools import setup
-from setuptools import find_packages
 
+import subprocess
+import sys
+
+from setuptools import find_packages
+from setuptools import setup
+
+
+__version__ = '2.0.2'
 
 # publish helper
 if sys.argv[-1] == 'publish':
@@ -36,5 +38,4 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     entry_points={'console_scripts': ['gotenshita=gotenshita.cli:main']},
-    test_suite='nose.collector',
 )

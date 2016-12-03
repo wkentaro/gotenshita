@@ -1,16 +1,15 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import argparse
-import re
-import time
-import sys
 import datetime
+import re
+import sys
+import time
 
-import termcolor
-import tabulate
-import requests
 from bs4 import BeautifulSoup
+import requests
+import tabulate
+import termcolor
 import yaml
 
 
@@ -42,10 +41,9 @@ def is_gotenshita_open(dt, verbose=True):
 
 
 def get_open_info_monthly(datetime_):
-
     yearmonth = datetime_.strftime('%Y%m')
 
-    url = 'http://www.undoukai-reserve.com/facility/reserve/goten/calendar.php?place=gymnasium&yearmonth={0}'
+    url = 'http://www.undoukai-reserve.com/facility/reserve/goten/calendar.php?place=gymnasium&yearmonth={}'  # NOQA
     url = url.format(yearmonth)
     res = requests.get(url)
     res.encoding = 'EUC-JP'
@@ -53,11 +51,13 @@ def get_open_info_monthly(datetime_):
 
     close_color = ['#ffaa00', '#ffdd66']
 
-    month_table = soup.find('table', {'cellpadding': '3', 'bgcolor': 'black', 'width': '765'})
+    month_table = soup.find(
+        'table', {'cellpadding': '3', 'bgcolor': 'black', 'width': '765'})
 
     # time header from 10:00 to 20:20
     time_header = month_table.find('td', {'bgcolor': 'black'})
-    time_header = [tuple(tr.text.strip().split(u'\u301c')) for tr in time_header.find_all('tr')]
+    time_header = [tuple(tr.text.strip().split(u'\u301c'))
+                   for tr in time_header.find_all('tr')]
 
     month_info = {}
     for date_sec in month_table.find_all('td', {'bgcolor': 'eeaa00'}):
@@ -69,7 +69,8 @@ def get_open_info_monthly(datetime_):
         rows.pop(0)  # remove A-F header
         assert len(time_header) == len(rows)
         for tr in rows:
-            time_sec = [td.attrs.get('bgcolor') not in close_color for td in tr.find_all('td')]
+            time_sec = [td.attrs.get('bgcolor') not in close_color
+                        for td in tr.find_all('td')]
             time_sec = dict(zip('abcdef', time_sec))
             time_sections.append(time_sec)
         date = int(re.sub(u'日\(.*\)$', '', date_sec.a.text))
@@ -88,15 +89,18 @@ def main():
                         action='store_true')
     args = parser.parse_args()
 
+    show_past = args.show_past
+    tomorrow = args.tomorrow
+
+    # decide the date when the info is shown about
     when = datetime.datetime.now()
-    if args.tomorrow:
+    if tomorrow:
         when = datetime.datetime(when.year, when.month, when.day)
         when += datetime.timedelta(days=1)
 
+    # check if gotenshita is open/close
     if not is_gotenshita_open(when):
-        sys.exit(1)
-
-    show_past = args.show_past
+        sys.exit(0)
 
     # validate args.court
     if args.court is None:
@@ -108,6 +112,7 @@ def main():
                 sys.stderr.write('Invalid court, we support A,B,C,..F.\n')
                 sys.exit(1)
 
+    # compose the result table
     table = []
     month_info = get_open_info_monthly(when)
     when_time = time.strptime(when.strftime('%H:%M:%S'), '%H:%M:%S')
