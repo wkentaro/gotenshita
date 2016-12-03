@@ -13,7 +13,7 @@ __version__ = '2.1.0'
 if sys.argv[-1] == 'publish':
     for cmd in [
             'python setup.py sdist upload',
-            'git tag {}'.format(__import__('gotenshita').__version__),
+            'git tag {}'.format(__version__),
             'git push origin master --tag']:
         subprocess.check_call(cmd, shell=True)
     sys.exit(0)
