@@ -1,5 +1,6 @@
-tabulate
-requests
-beautifulsoup4
-termcolor
 PyYAML
+beautifulsoup4
+lxml
+requests
+tabulate
+termcolor
