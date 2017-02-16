@@ -37,5 +37,5 @@ setup(
         'Operating System :: POSIX',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    entry_points={'console_scripts': ['gotenshita=gotenshita.cli:main']},
+    entry_points={'console_scripts': ['gotenshita=gotenshita:main']},
 )
