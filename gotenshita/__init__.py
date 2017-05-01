@@ -2,13 +2,17 @@
 
 import argparse
 import datetime
+import glob
+import os
+import os.path as osp
 import pkg_resources
+import pytz
 import re
 import sys
 import time
+import urllib2
 
 from bs4 import BeautifulSoup
-import requests
 import tabulate
 import termcolor
 import yaml
@@ -18,9 +22,22 @@ __version__ = pkg_resources.get_distribution('gotenshita').version
 
 
 def _is_holiday(dt):
-    yaml_file = 'https://raw.githubusercontent.com/k1LoW/holiday_jp/master/holidays.yml'  # NOQA
-    res = requests.get(yaml_file)
-    data = yaml.load(res.text)
+    cache_dir = osp.expanduser('~/.cache/gotenshita')
+    if not osp.exists(cache_dir):
+        os.makedirs(cache_dir)
+
+    now = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
+    cache_file = osp.join(cache_dir, now.strftime('%Y-%m.yaml'))
+    if osp.exists(cache_file):
+        data = yaml.load(open(cache_file))
+    else:
+        url = 'https://raw.githubusercontent.com/k1LoW/holiday_jp/master/holidays.yml'  # NOQA
+        content = urllib2.urlopen(url).read()
+        data = yaml.load(content)
+        for f in glob.glob(osp.join(cache_dir, '*.yaml')):
+            os.remove(f)
+        yaml.safe_dump(data, open(cache_file, 'w'), default_flow_style=False)
+
     info = data.get(dt)
     if info:
         return info['en']
@@ -49,9 +66,8 @@ def get_open_info_monthly(datetime_):
 
     url = 'http://www.undoukai-reserve.com/facility/reserve/goten/calendar.php?place=gymnasium&yearmonth={}'  # NOQA
     url = url.format(yearmonth)
-    res = requests.get(url)
-    res.encoding = 'EUC-JP'
-    soup = BeautifulSoup(res.text, 'lxml')
+    content = urllib2.urlopen(url).read().decode('EUC-JP')
+    soup = BeautifulSoup(content, 'lxml')
 
     close_color = ['#ffaa00', '#ffdd66']
 
@@ -134,5 +150,6 @@ def main():
                 open_or_close = termcolor.colored('open', 'green')
             row.append(open_or_close)
         table.append(row)
+
     headers = [when.strftime('%Y-%m-%d %a')] + courts
     print(tabulate.tabulate(table, headers=headers, stralign='center'))
