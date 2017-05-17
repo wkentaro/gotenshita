@@ -1,6 +1,7 @@
-PyYAML
 beautifulsoup4
 lxml
+pytz
+PyYAML
 requests
 tabulate
 termcolor
