@@ -10,7 +10,10 @@ import pytz
 import re
 import sys
 import time
-import urllib2
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
 import tabulate
@@ -32,7 +35,7 @@ def _is_holiday(dt):
         data = yaml.load(open(cache_file))
     else:
         url = 'https://raw.githubusercontent.com/k1LoW/holiday_jp/master/holidays.yml'  # NOQA
-        content = urllib2.urlopen(url).read()
+        content = urlopen(url).read()
         data = yaml.load(content)
         for f in glob.glob(osp.join(cache_dir, '*.yaml')):
             os.remove(f)
@@ -66,7 +69,7 @@ def get_open_info_monthly(datetime_):
 
     url = 'http://www.undoukai-reserve.com/facility/reserve/goten/calendar.php?place=gymnasium&yearmonth={}'  # NOQA
     url = url.format(yearmonth)
-    content = urllib2.urlopen(url).read().decode('EUC-JP')
+    content = urlopen(url).read().decode('EUC-JP')
     soup = BeautifulSoup(content, 'lxml')
 
     close_color = ['#ffaa00', '#ffdd66']
