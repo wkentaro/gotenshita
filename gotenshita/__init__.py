@@ -70,7 +70,7 @@ def get_open_info_monthly(datetime_):
     url = 'http://www.undoukai-reserve.com/facility/reserve/goten/calendar.php?place=gymnasium&yearmonth={}'  # NOQA
     url = url.format(yearmonth)
     content = urlopen(url).read().decode('EUC-JP')
-    soup = BeautifulSoup(content, 'lxml')
+    soup = BeautifulSoup(content, 'html.parser')
 
     close_color = ['#ffaa00', '#ffdd66']
 
