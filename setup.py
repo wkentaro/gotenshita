@@ -7,7 +7,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-__version__ = '2.2.3'
+__version__ = '2.2.4'
 
 # publish helper
 if sys.argv[-1] == 'publish':
