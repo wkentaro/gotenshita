@@ -1,7 +1,6 @@
 # gotenshita
 
 [![image](https://badge.fury.io/py/gotenshita.svg)](https://badge.fury.io/py/gotenshita)
-
 [![image](https://travis-ci.org/wkentaro/gotenshita.svg?branch=master)](https://travis-ci.org/wkentaro/gotenshita)
 
 See Gotenshita court open status. The information is got from
